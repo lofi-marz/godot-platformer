@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=35 format=2]
 
 [ext_resource path="res://Scripts/Adventurer.cs" type="Script" id=1]
 [ext_resource path="res://Content/Adventurer/adventurer-slide-00.png" type="Texture" id=2]
@@ -13,10 +13,25 @@
 [ext_resource path="res://Content/Adventurer/adventurer-run-05.png" type="Texture" id=11]
 [ext_resource path="res://Content/Adventurer/adventurer-fall-00.png" type="Texture" id=12]
 [ext_resource path="res://Content/Adventurer/adventurer-fall-01.png" type="Texture" id=13]
-[ext_resource path="res://Content/Adventurer/adventurer-jump-00.png" type="Texture" id=14]
-[ext_resource path="res://Content/Adventurer/adventurer-jump-01.png" type="Texture" id=15]
-[ext_resource path="res://Content/Adventurer/adventurer-jump-02.png" type="Texture" id=16]
-[ext_resource path="res://Content/Adventurer/adventurer-jump-03.png" type="Texture" id=17]
+[ext_resource path="res://Content/Adventurer/adventurer-attack2-00.png" type="Texture" id=14]
+[ext_resource path="res://Content/Adventurer/adventurer-attack2-01.png" type="Texture" id=15]
+[ext_resource path="res://Content/Adventurer/adventurer-attack2-02.png" type="Texture" id=16]
+[ext_resource path="res://Content/Adventurer/adventurer-attack2-03.png" type="Texture" id=17]
+[ext_resource path="res://Content/Adventurer/adventurer-attack2-04.png" type="Texture" id=18]
+[ext_resource path="res://Content/Adventurer/adventurer-attack2-05.png" type="Texture" id=19]
+[ext_resource path="res://Content/Adventurer/adventurer-crouch-00.png" type="Texture" id=20]
+[ext_resource path="res://Content/Adventurer/adventurer-crouch-01.png" type="Texture" id=21]
+[ext_resource path="res://Content/Adventurer/adventurer-crouch-02.png" type="Texture" id=22]
+[ext_resource path="res://Content/Adventurer/adventurer-crouch-03.png" type="Texture" id=23]
+[ext_resource path="res://Content/Adventurer/adventurer-jump-01.png" type="Texture" id=24]
+[ext_resource path="res://Content/Adventurer/adventurer-jump-00.png" type="Texture" id=25]
+[ext_resource path="res://Content/Adventurer/adventurer-jump-02.png" type="Texture" id=26]
+[ext_resource path="res://Content/Adventurer/adventurer-jump-03.png" type="Texture" id=27]
+[ext_resource path="res://Content/Adventurer/adventurer-attack1-00.png" type="Texture" id=28]
+[ext_resource path="res://Content/Adventurer/adventurer-attack1-01.png" type="Texture" id=29]
+[ext_resource path="res://Content/Adventurer/adventurer-attack1-02.png" type="Texture" id=30]
+[ext_resource path="res://Content/Adventurer/adventurer-attack1-03.png" type="Texture" id=31]
+[ext_resource path="res://Content/Adventurer/adventurer-attack1-04.png" type="Texture" id=32]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 10, 15 )
@@ -36,17 +51,32 @@ animations = [ {
 "frames": [ ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 11 ) ],
 "loop": true,
 "name": "run",
-"speed": 10.0
+"speed": 12.0
 }, {
 "frames": [ ExtResource( 12 ), ExtResource( 13 ) ],
 "loop": true,
 "name": "fall",
+"speed": 12.0
+}, {
+"frames": [ ExtResource( 14 ), ExtResource( 15 ), ExtResource( 16 ), ExtResource( 17 ), ExtResource( 18 ), ExtResource( 19 ) ],
+"loop": true,
+"name": "attack2",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 14 ), ExtResource( 15 ), ExtResource( 16 ), ExtResource( 17 ) ],
+"frames": [ ExtResource( 20 ), ExtResource( 21 ), ExtResource( 22 ), ExtResource( 23 ) ],
+"loop": true,
+"name": "crouch",
+"speed": 6.0
+}, {
+"frames": [ ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ) ],
 "loop": false,
 "name": "jump",
 "speed": 36.0
+}, {
+"frames": [ ExtResource( 28 ), ExtResource( 29 ), ExtResource( 30 ), ExtResource( 31 ), ExtResource( 32 ) ],
+"loop": true,
+"name": "attack1",
+"speed": 5.0
 } ]
 
 [node name="Player" type="KinematicBody2D"]
@@ -65,6 +95,6 @@ text = "0,0"
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 2 )
-animation = "jump"
-frame = 3
+animation = "crouch"
+frame = 1
 playing = true

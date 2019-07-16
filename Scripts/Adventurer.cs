@@ -36,18 +36,19 @@ public class Adventurer : KinematicBody2D
 	float timer = 0f; //How long we have been in the current state for
 
 	float maxGroundSpeed = 500f; //Ground x speed is clamped to this value
-	float maxAirSpeed = 400f; //Air x speed is clamped to this value
+	float maxAirSpeed = 500f; //Air x speed is clamped to this value
 	float groundAcc = 500f;
-	float airAcc = 200f;
+	float airAcc = 150f;
 	float gravity = 60f; 
 	float jumpVelocity = 900f; //The initial vertical velocty provided when jumping
 	float jumpReleaseDrag = 0.75f; //When the player releases the jump button, they slow down in order to be able to control the jump height
 	float groundDrag = 0.8f; //Player is slowed down while they are not inputting a move
+	float airDrag = 0.8f;
 	
 
 	bool isGrounded;
 	bool isJumping;
-	bool continuingJump;
+	bool finishedJump;
 	int jumpsLeft = 1;
 	// Called when the node enters the scene tree for the first time.
 
@@ -89,7 +90,7 @@ public class Adventurer : KinematicBody2D
 			RunState();
 		}
 
-		if (Input.IsActionPressed("game_up") && CheckStates(State.Run, State.Skid, State.Stand))
+		if (Input.IsActionJustPressed("game_up") && CheckStates(State.Run, State.Skid, State.Stand))
 		{
 			CurrentState = State.Jump;
 		}
@@ -132,19 +133,30 @@ public class Adventurer : KinematicBody2D
 		if (direction != 0)
 		{
 			Velocity.x += direction * airAcc;
-			Velocity.x *= groundDrag;
+			Velocity.x *= airDrag;
 		}
 		if (Input.IsActionJustReleased("move_up"))
 		{
-			continuingJump = false;
+			finishedJump = true;
 		}
-		if (isJumping && !continuingJump && Velocity.y < 0)
+		/*if (Input.IsActionJustPressed("dodge"))
+		{
+			GD.Print("Dodge");
+			var hDirection = (Input.IsActionPressed("game_left") ? -1 : 0) + (Input.IsActionPressed("game_right") ? 1 : 0);
+			var vDirection = (Input.IsActionPressed("game_up") ? -1 : 0) + (Input.IsActionPressed("game_down") ? 1 : 0);
+			Velocity += new Vector2(hDirection * 500f, vDirection * 500f);
+		}*/
+		if (isJumping && finishedJump && Velocity.y < 0)
 		{
 			Velocity.y *= jumpReleaseDrag;
 		}
 		if (Math.Abs(Velocity.x) > maxAirSpeed)
 		{
 			Velocity.x = maxAirSpeed * Math.Sign(Velocity.x);
+		}
+		if (Velocity.y > 0)
+		{
+			sprite.Play("fall");
 		}
 
 	}
@@ -193,7 +205,7 @@ public class Adventurer : KinematicBody2D
 		
 		sprite.Play("jump");
 		isJumping = true;
-		continuingJump = true;
+		finishedJump = false;
 		if (isGrounded)
 		{
 			Velocity.y = -jumpVelocity;
