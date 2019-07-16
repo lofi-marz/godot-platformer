@@ -1,0 +1,112 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Content/jungle tileset.png" type="Texture" id=1]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="GrassTopLeft" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+vframes = 19
+hframes = 39
+frame = 39
+
+[node name="StaticBody2D" type="StaticBody2D" parent="GrassTopLeft"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="GrassTopLeft/StaticBody2D"]
+polygon = PoolVector2Array( -8, 8, -8, -8, 8, -8, 8, 8 )
+
+[node name="GrassMiddle1" type="Sprite" parent="."]
+position = Vector2( 24, 0 )
+texture = ExtResource( 1 )
+vframes = 19
+hframes = 39
+frame = 40
+
+[node name="StaticBody2D" type="StaticBody2D" parent="GrassMiddle1"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="GrassMiddle1/StaticBody2D"]
+polygon = PoolVector2Array( -8, 8, -8, -8, 8, -8, 8, 8 )
+
+[node name="GrassTopRight" type="Sprite" parent="."]
+position = Vector2( 48, 0 )
+texture = ExtResource( 1 )
+vframes = 19
+hframes = 39
+frame = 43
+
+[node name="StaticBody2D" type="StaticBody2D" parent="GrassTopRight"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="GrassTopRight/StaticBody2D"]
+polygon = PoolVector2Array( -8, 8, -8, -8, 8, -8, 8, 8 )
+
+[node name="GrassMidLeft" type="Sprite" parent="."]
+position = Vector2( 0, 24 )
+texture = ExtResource( 1 )
+vframes = 19
+hframes = 39
+frame = 117
+
+[node name="StaticBody2D" type="StaticBody2D" parent="GrassMidLeft"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="GrassMidLeft/StaticBody2D"]
+polygon = PoolVector2Array( -8, 8, -8, -8, 8, -8, 8, 8 )
+
+[node name="GrassCentre" type="Sprite" parent="."]
+position = Vector2( 24, 24 )
+texture = ExtResource( 1 )
+vframes = 19
+hframes = 39
+frame = 119
+
+[node name="StaticBody2D" type="StaticBody2D" parent="GrassCentre"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="GrassCentre/StaticBody2D"]
+polygon = PoolVector2Array( -8, 8, -8, -8, 8, -8, 8, 8 )
+
+[node name="GrassMidRight" type="Sprite" parent="."]
+position = Vector2( 48, 24 )
+texture = ExtResource( 1 )
+vframes = 19
+hframes = 39
+frame = 121
+
+[node name="StaticBody2D" type="StaticBody2D" parent="GrassMidRight"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="GrassMidRight/StaticBody2D"]
+polygon = PoolVector2Array( -8, 8, -8, -8, 8, -8, 8, 8 )
+
+[node name="GrassBottomLeft" type="Sprite" parent="."]
+position = Vector2( 0, 48 )
+texture = ExtResource( 1 )
+vframes = 19
+hframes = 39
+frame = 195
+
+[node name="StaticBody2D" type="StaticBody2D" parent="GrassBottomLeft"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="GrassBottomLeft/StaticBody2D"]
+polygon = PoolVector2Array( -8, 8, -8, -8, 8, -8, 8, 8 )
+
+[node name="GrassMidBottom" type="Sprite" parent="."]
+position = Vector2( 24, 48 )
+texture = ExtResource( 1 )
+vframes = 19
+hframes = 39
+frame = 196
+
+[node name="StaticBody2D" type="StaticBody2D" parent="GrassMidBottom"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="GrassMidBottom/StaticBody2D"]
+polygon = PoolVector2Array( -8, 8, -8, -8, 8, -8, 8, 8 )
+
+[node name="GrassBottomRight" type="Sprite" parent="."]
+position = Vector2( 48, 48 )
+texture = ExtResource( 1 )
+vframes = 19
+hframes = 39
+frame = 199
+
+[node name="StaticBody2D" type="StaticBody2D" parent="GrassBottomRight"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="GrassBottomRight/StaticBody2D"]
+polygon = PoolVector2Array( -8, 8, -8, -8, 8, -8, 8, 8 )
