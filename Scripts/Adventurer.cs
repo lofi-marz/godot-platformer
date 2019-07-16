@@ -214,7 +214,6 @@ public class Adventurer : KinematicBody2D
 		}
 		return false;
 	}
-	public class PlayerMover
 
 
 
