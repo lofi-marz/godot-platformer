@@ -19,6 +19,6 @@ public class PlayerCamera : Camera2D
 	public override void _Process(float delta)
 	{
 		SetPosition(Parent.Position);
-		GD.Print(Position);
+		
 	}
 }
