@@ -14,6 +14,7 @@ public class Adventurer : KinematicBody2D
 		Air,
 		Run,
 		Skid,
+		GroundAttack,
 	}
 	// Declare member variables here. Examples:
 	// private int a = 2;
@@ -95,6 +96,11 @@ public class Adventurer : KinematicBody2D
 			CurrentState = State.Jump;
 		}
 
+		if (Input.IsActionJustPressed("game_attack") && CheckStates(State.Run, State.Skid, State.Stand))
+		{
+			CurrentState = State.GroundAttack;
+		}
+
 
 	}
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -115,10 +121,12 @@ public class Adventurer : KinematicBody2D
 		RunState();
 		SkidState();
 		JumpState();
+		GroundAttackState();
 	}
 	public void StandState() //The player is standing still on the ground and not inputting anything
 	{
 		if (CurrentState != State.Stand) return;
+
 		sprite.Play("idle");
 		Velocity.y = 0f;
 		Velocity.x *= groundDrag;
@@ -135,7 +143,8 @@ public class Adventurer : KinematicBody2D
 			Velocity.x += direction * airAcc;
 			Velocity.x *= airDrag;
 		}
-		if (Input.IsActionJustReleased("move_up"))
+
+		if (!Input.IsActionPressed("game_up"))
 		{
 			finishedJump = true;
 		}
@@ -181,7 +190,6 @@ public class Adventurer : KinematicBody2D
 		else
 		{
 			CurrentState = State.Skid;
-
 		}
 	}
 
@@ -199,13 +207,25 @@ public class Adventurer : KinematicBody2D
 
 	}
 
+	public void GroundAttackState()
+	{
+		if (CurrentState != State.GroundAttack) return;
+		sprite.Play("attack1");
+		GD.Print(timer);
+		if (timer > 12/12)
+		{
+			CurrentState = State.Stand;
+		}
+
+	}
+
 	public void JumpState() //The character has inputted a jump
 	{
 		if (CurrentState != State.Jump) return;
-		
+		finishedJump = false;
 		sprite.Play("jump");
 		isJumping = true;
-		finishedJump = false;
+		
 		if (isGrounded)
 		{
 			Velocity.y = -jumpVelocity;
