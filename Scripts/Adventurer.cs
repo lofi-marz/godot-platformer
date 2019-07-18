@@ -12,9 +12,11 @@ public class Adventurer : KinematicBody2D
 		Landing,
 		FreeFall,
 		Air,
+		Dash,
 		Run,
 		Skid,
 		GroundAttack,
+		Crouch,
 	}
 	// Declare member variables here. Examples:
 	// private int a = 2;
@@ -30,14 +32,17 @@ public class Adventurer : KinematicBody2D
 			if (value != _currentState)
 			{
 				timer = 0;
+				prevState = _currentState;
 				_currentState = value;
 			}
 		} }
 	State _currentState;
+	State prevState;
 	float timer = 0f; //How long we have been in the current state for
 
 	float maxGroundSpeed = 500f; //Ground x speed is clamped to this value
-	float maxAirSpeed = 500f; //Air x speed is clamped to this value
+	float maxAirXSpeed = 500f; //Air x speed is clamped to this value
+	float maxAirYSpeed = 750f;
 	float groundAcc = 500f;
 	float airAcc = 150f;
 	float gravity = 60f; 
@@ -50,6 +55,10 @@ public class Adventurer : KinematicBody2D
 	bool isGrounded;
 	bool isJumping;
 	bool finishedJump;
+	bool finishedDash;
+
+	int facingHDirection;
+	int inputHDirection;
 	int jumpsLeft = 1;
 	// Called when the node enters the scene tree for the first time.
 
@@ -66,7 +75,7 @@ public class Adventurer : KinematicBody2D
 	public override void _PhysicsProcess(float delta)
 	{
 		base._PhysicsProcess(delta);
-		timer += delta;
+		timer += 1;
 
 		CycleStates();
 
@@ -84,24 +93,27 @@ public class Adventurer : KinematicBody2D
 		}
 
 		//Cancelling one of the ground states into a run
-		var hDirection = (Input.IsActionPressed("game_left") ? -1 : 0) + (Input.IsActionPressed("game_right") ? 1 : 0);
-		if (hDirection != 0 && CheckStates(State.Skid, State.Stand))
+		UpdateDirection();
+		if (inputHDirection != 0 && CheckStates(State.Skid, State.Stand))
 		{
-			CurrentState = State.Run;
-			RunState();
+			CurrentState = State.Dash;
+			DashState();
 		}
 
-		if (Input.IsActionJustPressed("game_up") && CheckStates(State.Run, State.Skid, State.Stand))
+		if (Input.IsActionJustPressed("game_up") && CheckStates(State.Dash, State.Run, State.Skid, State.Stand, State.Crouch))
 		{
 			CurrentState = State.Jump;
 		}
 
-		if (Input.IsActionJustPressed("game_attack") && CheckStates(State.Run, State.Skid, State.Stand))
+		if (Input.IsActionJustPressed("game_attack") && CheckStates(State.Dash, State.Run, State.Skid, State.Stand))
 		{
 			CurrentState = State.GroundAttack;
 		}
 
-
+		if (Input.IsActionJustPressed("game_down") && CheckStates(State.Dash, State.Run, State.Skid, State.Stand))
+		{
+			CurrentState = State.Crouch;
+		}
 	}
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(float delta)
@@ -109,7 +121,7 @@ public class Adventurer : KinematicBody2D
 
 		var velLabel = (RichTextLabel)GetNode("./Velocity");
 
-		velLabel.Text = $"{CurrentState} {Velocity.x:F2}, {Velocity.y:F2}";
+		velLabel.Text = $"{CurrentState.ToString().PadRight(10, ' ')} {Velocity.x.ToString().PadDecimals(1).PadZeros(3):F1}, {Velocity.y.ToString().PadDecimals(1).PadZeros(3):F1}";
 		
 		
 	}
@@ -119,9 +131,19 @@ public class Adventurer : KinematicBody2D
 		StandState();
 		AirState();
 		RunState();
+		DashState();
 		SkidState();
 		JumpState();
 		GroundAttackState();
+		CrouchState();
+	}
+	public bool CheckStates(params State[] states)
+	{
+		foreach (var state in states)
+		{
+			if (CurrentState == state) return true;
+		}
+		return false;
 	}
 	public void StandState() //The player is standing still on the ground and not inputting anything
 	{
@@ -130,18 +152,61 @@ public class Adventurer : KinematicBody2D
 		sprite.Play("idle");
 		Velocity.y = 0f;
 		Velocity.x *= groundDrag;
+		Velocity.x = (float)Math.Round(Velocity.x, 2) == 0 ? (float)Math.Round(Velocity.x, 2) : Velocity.x;
 		isJumping = false;
 	}
+	public void DashState()
+	{
+		finishedDash = false;
+		if (CurrentState != State.Dash) return;
 
+		sprite.Play("run");
+
+		UpdateDirection();
+
+
+			if (inputHDirection != 0)
+			{
+				sprite.FlipH = (inputHDirection < 0);
+
+				Velocity.x += inputHDirection * groundAcc*0.5f;
+				if (Math.Abs(Velocity.x) > maxGroundSpeed)
+				{
+					Velocity.x = maxGroundSpeed * Math.Sign(Velocity.x);
+				}
+				CurrentState = State.Dash;
+			}
+			else
+			{
+				CurrentState = State.Skid;
+			}
+		
+
+
+
+		if (timer > 5)
+		{
+			CurrentState = State.Run;
+		}
+
+
+
+
+	}
 	public void AirState() //The player is in the air as a result of jumping or falling
 	{
 		if (CurrentState != State.Air) return;
-		var direction = (Input.IsActionPressed("game_left")?-1:0) + (Input.IsActionPressed("game_right")?1:0);
+		UpdateDirection();
 
-		if (direction != 0)
+		if (inputHDirection != 0)
 		{
-			Velocity.x += direction * airAcc;
+			Velocity.x += inputHDirection * airAcc;
 			Velocity.x *= airDrag;
+
+		}
+		if (Velocity.y > maxAirYSpeed)
+		{
+			Velocity.y = maxAirYSpeed;
 		}
 
 		if (!Input.IsActionPressed("game_up"))
@@ -159,32 +224,27 @@ public class Adventurer : KinematicBody2D
 		{
 			Velocity.y *= jumpReleaseDrag;
 		}
-		if (Math.Abs(Velocity.x) > maxAirSpeed)
-		{
-			Velocity.x = maxAirSpeed * Math.Sign(Velocity.x);
-		}
+		Velocity.x = Maths.Clamp(Velocity.x, maxAirXSpeed);
+
 		if (Velocity.y > 0)
 		{
 			sprite.Play("fall");
 		}
 
 	}
-
 	public void RunState() //The player has inputted a run
 	{
 		if (CurrentState != State.Run) return;
 		sprite.Play("run");
-		var direction = (Input.IsActionPressed("game_left") ? -1 : 0) + (Input.IsActionPressed("game_right") ? 1 : 0);
+		UpdateDirection();
 
-		if (direction != 0)
+		if (inputHDirection != 0)
 		{
-			sprite.FlipH = (direction < 0);
+			sprite.FlipH = (inputHDirection < 0);
 			
-			Velocity.x += direction * groundAcc;
-			if (Math.Abs(Velocity.x) > maxGroundSpeed)
-			{
-				Velocity.x = maxGroundSpeed * Math.Sign(Velocity.x);
-			}
+			Velocity.x += inputHDirection * groundAcc;
+			Velocity.x = Maths.Clamp(Velocity.x, maxGroundSpeed);
+
 			CurrentState = State.Run;
 		}
 		else
@@ -192,7 +252,19 @@ public class Adventurer : KinematicBody2D
 			CurrentState = State.Skid;
 		}
 	}
-
+	public void CrouchState()
+	{
+		if (CurrentState != State.Crouch) return;
+		sprite.Play("crouch");
+		if (Input.IsActionPressed("game_down"))
+		{
+			Velocity.x *= groundDrag*0.9f;
+		}
+		else
+		{
+			CurrentState = State.Stand;
+		}
+	}
 	public void SkidState() //The character has ended a run
 	{
 		if (CurrentState != State.Skid) return;
@@ -206,7 +278,6 @@ public class Adventurer : KinematicBody2D
 		}
 
 	}
-
 	public void GroundAttackState()
 	{
 		if (CurrentState != State.GroundAttack) return;
@@ -218,7 +289,6 @@ public class Adventurer : KinematicBody2D
 		}
 
 	}
-
 	public void JumpState() //The character has inputted a jump
 	{
 		if (CurrentState != State.Jump) return;
@@ -233,20 +303,19 @@ public class Adventurer : KinematicBody2D
 
 
 	}
-
 	public void LandingState()
 	{
 
 	}
-	public bool CheckStates(params State[] states)
+	
+	public void UpdateDirection()
 	{
-		foreach (var state in states)
+		inputHDirection = (Input.IsActionPressed("game_left") ? -1 : 0) + (Input.IsActionPressed("game_right") ? 1 : 0);
+		if (inputHDirection != 0)
 		{
-			if (CurrentState == state) return true;
+			facingHDirection = inputHDirection;
 		}
-		return false;
 	}
-
 
 
 }
