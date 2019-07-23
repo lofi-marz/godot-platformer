@@ -54,6 +54,7 @@
     <Compile Include="Scripts\CharacterMover.cs" />
     <Compile Include="Scripts\Maths.cs" />
     <Compile Include="Scripts\PlayerCamera.cs" />
+    <Compile Include="Scripts\Tower.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -40,6 +40,7 @@ public class Adventurer : KinematicBody2D
 	State prevState;
 	float timer = 0f; //How long we have been in the current state for
 
+	[Export]
 	float maxGroundSpeed = 500f; //Ground x speed is clamped to this value
 	float maxAirXSpeed = 500f; //Air x speed is clamped to this value
 	float maxAirYSpeed = 750f;
@@ -48,7 +49,7 @@ public class Adventurer : KinematicBody2D
 	float gravity = 60f; 
 	float jumpVelocity = 900f; //The initial vertical velocty provided when jumping
 	float jumpReleaseDrag = 0.75f; //When the player releases the jump button, they slow down in order to be able to control the jump height
-	float groundDrag = 0.8f; //Player is slowed down while they are not inputting a move
+	float groundDrag = 0.6f; //Player is slowed down while they are not inputting a move
 	float airDrag = 0.8f;
 	
 
@@ -165,22 +166,22 @@ public class Adventurer : KinematicBody2D
 		UpdateDirection();
 
 
-			if (inputHDirection != 0)
-			{
-				sprite.FlipH = (inputHDirection < 0);
+		if (inputHDirection != 0)
+		{
+			sprite.FlipH = (inputHDirection < 0);
 
-				Velocity.x += inputHDirection * groundAcc*0.5f;
-				if (Math.Abs(Velocity.x) > maxGroundSpeed)
-				{
-					Velocity.x = maxGroundSpeed * Math.Sign(Velocity.x);
-				}
-				CurrentState = State.Dash;
-			}
-			else
+			Velocity.x += inputHDirection * groundAcc * 0.5f;
+			if (Math.Abs(Velocity.x) > maxGroundSpeed)
 			{
-				CurrentState = State.Skid;
+				Velocity.x = maxGroundSpeed * Math.Sign(Velocity.x);
 			}
-		
+			CurrentState = State.Dash;
+		}
+		else
+		{
+			CurrentState = State.Skid;
+		}
+
 
 
 
