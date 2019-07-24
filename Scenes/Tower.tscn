@@ -8,3 +8,5 @@ tile_set = ExtResource( 1 )
 cell_size = Vector2( 16, 16 )
 format = 1
 script = ExtResource( 2 )
+
+[node name="PlayerStart" type="Position2D" parent="."]

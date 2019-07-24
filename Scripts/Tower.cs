@@ -26,12 +26,17 @@ public class Tower : TileMap
 	private int[,] TowerRooms;
 
 	private Button genTower;
+    private Position2D PlayerStart;
+    private int startingRoomX, startingRoomY;
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
 		GenTower();
 		CreateTileMap();
-	}
+        PrintTower();
+        PlayerStart.SetGlobalPosition(new Vector2(roomWidth * startingRoomX * 16, roomHeight * startingRoomY * 16)
+        + new Vector2(roomWidth * 16f * 0.5f, roomHeight * 16f * 0.5f));
+    }
 
 
 	public override void _Input(InputEvent @event)
@@ -54,7 +59,7 @@ public class Tower : TileMap
 		{
 			for (int y = 0; y < height* roomHeight; y++) 
 			{
-				SetCell(x, y, TowerCells[x,y] == 1 ? -1: 1);
+				SetCell(x, y, TowerCells[x,y] == 0 ? -1 : 1);
 			}
 		}
 		UpdateDirtyQuadrants();
@@ -64,13 +69,16 @@ public class Tower : TileMap
 	public void GenTower()
 	{
 		TowerRooms = GenTowerRoomPath();
-		TowerCells = new int[width * roomWidth, height * roomHeight];
-		GD.Print($"{width * roomWidth}, {height * roomHeight}");
+        PrintTowerRooms();
+        TowerCells = new int[width * roomWidth, height * roomHeight];
+		//GD.Print($"{width * roomWidth}, {height * roomHeight}");
 		for (int y = 0; y < height; y++)
 		{
 			for (int x = 0; x < width; x++)
 			{
-				GenRoomInTower((RoomType)TowerRooms[x, y], x*roomWidth, y*roomHeight);
+                var room = TowerRooms[x, y];
+                var type = (RoomType)room;
+                GenRoomInTower(type, x*roomWidth, y*roomHeight);
 			}
 		}
 	}
@@ -89,23 +97,23 @@ public class Tower : TileMap
 			return;
 		}
 		var file = new File();
-		file.Open($"res://Templates/{type.ToString()}.tres", (int)File.ModeFlags.Read);
+		file.Open($"res://Templates/{type.ToString()}.txt", (int)File.ModeFlags.Read);
 		GD.Print(type.ToString());
 		string[] room = file.GetAsText().Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-		GD.Print(room);
+		//GD.Print(room);
 		for (int y = 0; y < roomHeight; y++)
 		{ 
 			for (int x = 0; x < roomWidth; x++)
 			{
-				if (y == room.Length || x == room[x].Length) 
+				if (y == room.Length || x == room[y].Length) 
 				{
 					GD.Print("heck");
 
 				}
-				GD.Print($"{x}, {y}");
+				//GD.Print($"{x}, {y}");
 				var cell = room[y][x];
 				
-				TowerCells[startX + x, startY + y] = cell;
+				TowerCells[startX + x, startY + y] = int.Parse(cell.ToString());
 
 				
 			}
@@ -118,7 +126,9 @@ public class Tower : TileMap
 		var rnd = new Random();
 		int x = rnd.Next(0, width);
 		int y = height - 1;
-		bool finishedPath = false;
+        startingRoomX = x;
+        startingRoomY = y;
+        bool finishedPath = false;
 		Exit direction = PickDirection(rnd);
 		while (!finishedPath)
 		{
@@ -202,7 +212,7 @@ public class Tower : TileMap
 		return direction;
 	}
 
-	public void PrintTower()
+	public void PrintTowerRooms()
 	{
 		for (int y = 0; y < height; y++)
 		{
@@ -230,7 +240,20 @@ public class Tower : TileMap
 			GD.Print(line);
 		}
 	}
+	public void PrintTower()
+    {
+        for (int y = 0; y < height*roomHeight; y++)
+        {
+            string line = "";
+            for (int x = 0; x < width*roomWidth; x++)
+            {
+                String cell = TowerCells[x, y].ToString();
 
+                line += cell;
+            }
+            GD.Print(line);
+        }
+    }
 	//  // Called every frame. 'delta' is the elapsed time since the previous frame.
 	//  public override void _Process(float delta)
 	//  {
