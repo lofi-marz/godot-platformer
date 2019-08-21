@@ -34,6 +34,7 @@ public class Tower : TileMap
 		GenTower();
 		CreateTileMap();
         PrintTower();
+		PlayerStart = (Position2D)GetNode("./PlayerStart");
         PlayerStart.SetGlobalPosition(new Vector2(roomWidth * startingRoomX * 16, roomHeight * startingRoomY * 16)
         + new Vector2(roomWidth * 16f * 0.5f, roomHeight * 16f * 0.5f));
     }
