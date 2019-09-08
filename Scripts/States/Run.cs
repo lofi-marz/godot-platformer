@@ -38,7 +38,7 @@ namespace Platformer.Scripts.States
 			}
 			else
 			{
-				EmitSignal(nameof(Finished), "idle");
+				EmitSignal(FINISHED, "idle");
 			}
 			
 		}

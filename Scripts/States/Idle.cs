@@ -33,7 +33,7 @@ namespace Platformer.Scripts.States
 			var inputHDirection = (isLeft ? -1 : 0) + (isRight ? 1 : 0);
 			if (inputHDirection != 0)
 			{
-				EmitSignal(nameof(Finished), "run");
+				EmitSignal(FINISHED, "run");
 				var player = (PlayerCharacter)GetOwner();
 				var sprite = (AnimatedSprite)player.GetNode("./Sprite");
 				sprite.FlipH = (inputHDirection < 0);

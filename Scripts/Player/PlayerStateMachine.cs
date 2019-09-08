@@ -28,8 +28,7 @@ namespace Platformer.Scripts
 		public override void _PhysicsProcess(float delta)
 		{
 			base._PhysicsProcess(delta);
-			var player = (PlayerCharacter)GetOwner();
-			player.Velocity.y += player.Gravity;
+			
 		}
 
 		public override void _Input(InputEvent e)

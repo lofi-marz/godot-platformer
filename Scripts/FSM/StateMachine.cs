@@ -2,30 +2,9 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public abstract class State : Node
-{
-
-	[Signal]
-	public delegate void Finished();
-	public abstract void OnEnter();
-	public virtual void OnExit()
-	{
-
-	}
-	public abstract void Update(float delta);
-	public virtual void HandleInput()
-	{
-
-	}
-	
-}
-
 public class StateMachine : Node
 {
-	[Signal]
-	public delegate void StateChange();
-	
-	public StateChange StateChanged;
+
 	public Dictionary<string, State> StateMap;
 	public Stack<State> States;
 	
@@ -52,7 +31,6 @@ public class StateMachine : Node
 		}
 		set
 		{
-			EmitSignal(nameof(StateChange));
 			Timer = 0f;
 			_currentState = value;
 		}
@@ -74,28 +52,36 @@ public class StateMachine : Node
 	public override void _Ready()
 	{
 		base._Ready();
+		
 		States = new Stack<State>();
+		
 		foreach (State child in GetChildren())
 		{
-			child.Connect(nameof(State.Finished), this, nameof(ChangeState));
+            child.Connect(State.FINISHED, this, nameof(ChangeState));
 		}
 		Active = false;
 		
 	}
 
-	public void ChangeState(string stateName)
+	public void ChangeState(string newState)
 	{
-		GD.Print("Changing State");
+		GD.Print($"Changing State ->{newState}");
 
 		CurrentState.OnExit();
-		if (stateName == "previous" && States.Count < 1)
+		if (newState == "previous" && States.Count < 1)
 		{
 			States.Pop();
 			CurrentState = States.Peek();
 		}
+		else if (newState == "previous")
+		{
+            CurrentState = StateMap[StartState];
+            States.Push(CurrentState);
+
+		}
 		else
 		{
-			CurrentState = StateMap[stateName];
+			CurrentState = StateMap[newState];
 			States.Push(CurrentState);
 		}
 		

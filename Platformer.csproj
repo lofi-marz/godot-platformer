@@ -52,6 +52,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripts\Adventurer.cs" />
     <Compile Include="Scripts\FSM\StateMachine.cs" />
+	<Compile Include="Scripts\FSM\State.cs" />
     <Compile Include="Scripts\PhysicsParams.cs" />
     <Compile Include="Scripts\Player\PlayerCamera.cs" />
     <Compile Include="Scripts\Player\PlayerCharacter.cs" />

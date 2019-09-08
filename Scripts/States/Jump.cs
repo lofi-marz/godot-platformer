@@ -8,6 +8,7 @@ using Godot;
 namespace Platformer.Scripts.States
 {
 	class Jump : State
+	
 	{
 		bool finishedJump;
 		public override void OnEnter()
@@ -15,7 +16,7 @@ namespace Platformer.Scripts.States
 			var player = (PlayerCharacter)GetOwner();
 			if (!player.IsOnFloor())
 			{
-				EmitSignal(nameof(Finished), "previous");
+				EmitSignal(FINISHED, "previous");
 			}
 			player.Velocity.y = -player.JumpVelocity;
 			
@@ -34,7 +35,7 @@ namespace Platformer.Scripts.States
 
 			if (player.IsOnFloor())
 			{
-				EmitSignal(nameof(Finished), "idle");
+				EmitSignal(FINISHED,"idle");
 			}
 		}
 
